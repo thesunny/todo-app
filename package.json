@@ -10,6 +10,7 @@
     "@emotion/core": "^10.0.15",
     "@emotion/styled": "^10.0.15",
     "@prisma/cli": "^2.9.0",
+    "@prisma/client": "^2.9.0",
     "@types/jest": "^24.0.24",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-source-maps": "0.0.4-canary.1",
@@ -19,7 +20,7 @@
     "jsome": "^2.5.0",
     "kind-of": "^6.0.2",
     "lodash": "^4.17.20",
-    "next": "9.1",
+    "next": "^9.5.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },
@@ -36,8 +37,8 @@
     "typescript": "^3.7.4"
   },
   "scripts": {
-    "dev": "next --port 4000",
     "prisma": "prisma",
+    "start:dev": "next --port 4000",
     "start:db": "cd docker/postgres && docker-compose up",
     "test": "jest --watch"
   }
