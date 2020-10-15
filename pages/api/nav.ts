@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import { NavPage } from "~/types"
 import { nextHandler } from "~/lib/next-handler"
 
 const prisma = new PrismaClient()
@@ -10,4 +11,4 @@ export default nextHandler(async (req, res) => {
   return { pages }
 })
 
-export type Response = { pages: Array<{ id: number; title: string }> }
+export type Response = { pages: NavPage[] }
