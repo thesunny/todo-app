@@ -1,0 +1,11 @@
+# Use postgres/example user/password credentials
+version: "3.1"
+
+services:
+  note-app-db:
+    image: postgres
+    restart: always
+    ports:
+      - "5440:5432"
+    environment:
+      POSTGRES_PASSWORD: my-password

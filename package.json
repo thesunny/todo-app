@@ -9,6 +9,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.15",
     "@emotion/styled": "^10.0.15",
+    "@prisma/cli": "^2.9.0",
     "@types/jest": "^24.0.24",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-source-maps": "0.0.4-canary.1",
@@ -35,7 +36,9 @@
     "typescript": "^3.7.4"
   },
   "scripts": {
-    "dev": "next",
+    "dev": "next --port 4000",
+    "prisma": "prisma",
+    "start:db": "cd docker/postgres && docker-compose up",
     "test": "jest --watch"
   }
 }
