@@ -1,14 +1,14 @@
-import { PrismaClient } from "@prisma/client"
 import { nextHandler } from "~/lib/next-handler"
-
-const prisma = new PrismaClient()
+import { prisma } from "~/lib/prisma"
 
 const handler = nextHandler(async (req, res) => {
-  const id = req.query.id
-  const pages = await prisma.page.findMany({
-    select: { id: true, title: true },
+  const id = req.body.id
+  const page = await prisma.page.findOne({
+    select: { id: true, title: true, body: true, createdAt: true },
+    where: { id },
   })
-  return { pages }
+  if (page == null) throw new Error("Page not found")
+  return { page }
 })
 
 export default handler

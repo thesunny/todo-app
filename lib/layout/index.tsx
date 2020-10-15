@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
-// import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next"
-// import { Response } from "./api/nav"
+import cx from "classnames"
 import { NavPage } from "~/types"
+import Link from "next/link"
 
 const $Container = styled.div`
   margin: 1em;
@@ -15,45 +15,48 @@ const $Right = styled.div`
   flex: 1 0 auto;
 `
 
-// type Page = {
-//   id: number
-//   title: string
-// }
-
-// export const getStaticProps: GetStaticProps<Response> = async () => {
-//   console.log(1)
-//   const res = await fetch("http://localhost:4000/api/nav")
-//   console.log(2)
-//   const json = await res.json()
-//   console.log(3)
-//   return { props: json }
-// }
-
 export function Layout({
   children,
+  activePageId,
   pages,
 }: {
   children: React.ReactNode
+  activePageId?: number
   pages: NavPage[]
 }) {
   return (
-    <$Container>
-      <$Left>
-        Navigation
-        <ul className="list-group">
-          {pages.map((page) => {
-            return (
-              <li
-                key={page.id}
-                className="list-group-item list-group-item-action"
-              >
-                {page.title}
-              </li>
-            )
-          })}
+    <>
+      <div className="navbar navbar-expand-sm">
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <Link href="/">
+              <a className="nav-link">Home</a>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link href="/add-page">
+              <a className="nav-link">Add page</a>
+            </Link>
+          </li>
         </ul>
-      </$Left>
-      <$Right className="ml-4">{children}</$Right>
-    </$Container>
+      </div>
+      <$Container>
+        <$Left>
+          <div className="list-group">
+            {pages.map((page) => {
+              const className = cx("list-group-item list-group-item-action", {
+                active: activePageId === page.id,
+              })
+              return (
+                <Link key={page.id} href={`/page/${page.id}`}>
+                  <a className={className}>{page.title}</a>
+                </Link>
+              )
+            })}
+          </div>
+        </$Left>
+        <$Right className="ml-4">{children}</$Right>
+      </$Container>
+    </>
   )
 }
