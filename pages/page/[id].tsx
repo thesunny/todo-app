@@ -10,7 +10,7 @@ export const getServerSideProps: GetStaticProps<Response> = async ({
 }) => {
   const { pages } = await call("nav")
   const id = parseInt((params as any).id)
-  const { page } = await call("page", { id })
+  const { page } = await call("page/view", { id })
   return { props: { page, pages } }
 }
 
@@ -26,7 +26,7 @@ function PageView({ page }: { page: any }) {
   useEffect(() => {
     return () => {
       if (savedValue.current !== currentValue.current) {
-        call("update-page", { id: page.id, body: currentValue.current })
+        call("page/update", { id: page.id, body: currentValue.current })
       }
     }
   }, [])
@@ -39,7 +39,7 @@ function PageView({ page }: { page: any }) {
     currentValue.current = value
     const id = setTimeout(async () => {
       console.log("autosave after timeout")
-      await call("update-page", { id: page.id, body: currentValue.current })
+      await call("page/update", { id: page.id, body: currentValue.current })
     }, 2000)
     return () => {
       clearTimeout(id)
@@ -47,7 +47,7 @@ function PageView({ page }: { page: any }) {
   }, [value])
 
   async function deletePage() {
-    call("delete-page", { id: page.id })
+    call("page/delete", { id: page.id })
     router.push("/")
   }
 
