@@ -2,6 +2,8 @@ import styled from "@emotion/styled"
 import cx from "classnames"
 import { NavPage } from "~/types"
 import Link from "next/link"
+import { call } from "../api/call"
+import { useRouter } from "next/router"
 
 const $Container = styled.div`
   margin: 1em;
@@ -24,24 +26,21 @@ export function Layout({
   activePageId?: number
   pages: NavPage[]
 }) {
+  const router = useRouter()
+  async function addPage() {
+    const { id } = await call("add-page")
+    router.push(`/page/${id}`)
+  }
   return (
     <>
-      <div className="navbar navbar-expand-sm">
-        <ul className="navbar-nav">
-          <li className="nav-item">
-            <Link href="/">
-              <a className="nav-link">Home</a>
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link href="/add-page">
-              <a className="nav-link">Add page</a>
-            </Link>
-          </li>
-        </ul>
-      </div>
       <$Container>
         <$Left>
+          <div className="mb-2 text-right">
+            <button className="btn btn-primary" onClick={addPage}>
+              <i className="fa fa-plus mr-2" />
+              Add page
+            </button>
+          </div>
           <div className="list-group">
             {pages.map((page) => {
               const className = cx("list-group-item list-group-item-action", {

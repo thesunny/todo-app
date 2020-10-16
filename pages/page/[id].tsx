@@ -23,25 +23,12 @@ function PageView({ page }: { page: any }) {
   /**
    * Autosave navigate away
    */
-  // useEffect(() => {
-  //   return () => {
-  //     if (savedValue.current !== currentValue.current) {
-  //       console.log("autosave navigate away")
-  //       call("update-page", { id: page.id, body: currentValue.current })
-  //     }
-  //   }
-  // }, [])
-
   useEffect(() => {
-    console.log("set nav away")
-    router.beforePopState((e) => {
-      console.log(1, e)
-      if (savedValue.current === currentValue.current) return true
-      console.log(2)
-      console.log("autosave navigate away")
-      call("update-page", { id: page.id, body: currentValue.current })
-      return false
-    })
+    return () => {
+      if (savedValue.current !== currentValue.current) {
+        call("update-page", { id: page.id, body: currentValue.current })
+      }
+    }
   }, [])
 
   /**
@@ -59,14 +46,27 @@ function PageView({ page }: { page: any }) {
     }
   }, [value])
 
+  async function deletePage() {
+    call("delete-page", { id: page.id })
+    router.push("/")
+  }
+
   return (
-    <textarea
-      className="form-control"
-      placeholder="Enter notes here..."
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      style={{ height: "24em" }}
-    />
+    <>
+      <div className="text-right mb-2">
+        <button className="btn btn-outline-danger" onClick={deletePage}>
+          <i className="fa fa-trash mr-2" />
+          Delete
+        </button>
+      </div>
+      <textarea
+        className="form-control"
+        placeholder="Enter notes here..."
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        style={{ height: "24em" }}
+      />
+    </>
   )
 }
 
