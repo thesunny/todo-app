@@ -4,6 +4,7 @@ import { NavPage } from "~/types"
 import Link from "next/link"
 import { Client } from "../api/client"
 import { useRouter } from "next/router"
+import { PageAddResponse } from "~/pages/api/page/add"
 
 const $Container = styled.div`
   margin: 1em;
@@ -28,7 +29,7 @@ export function Layout({
 }) {
   const router = useRouter()
   async function addPage() {
-    const { id } = await Client.call("page/add")
+    const { id } = await Client.call<PageAddResponse>("page/add")
     router.push(`/page/${id}`)
   }
   return (
