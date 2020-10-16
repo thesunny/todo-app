@@ -1,16 +1,28 @@
-import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next"
+import {
+  GetStaticProps,
+  GetServerSideProps,
+  InferGetStaticPropsType,
+  InferGetServerSidePropsType,
+  NextPage,
+} from "next"
 import { useEffect, useRef, useState } from "react"
-import { Response } from "~/pages/api/nav"
+import { Response as NavResponse } from "~/pages/api/nav"
+import { PageViewResponse } from "~/pages/api/page/view"
 import { Layout } from "~/lib/layout"
-import { call } from "~/lib/api/call"
+import { Client } from "~/lib/api/client"
 import { useRouter } from "next/router"
 
-export const getServerSideProps: GetStaticProps<Response> = async ({
-  params,
-}) => {
-  const { pages } = await call("nav")
+export const getServerSideProps: GetServerSideProps<{
+  pages: NavResponse["pages"]
+  page: PageViewResponse["page"]
+}> = async ({ params }) => {
+  console.log(111)
+  const { pages } = await Client.call<NavResponse>("nav")
+  console.log(222)
   const id = parseInt((params as any).id)
-  const { page } = await call("page/view", { id })
+  console.log(333, id)
+  const { page } = await Client.call<PageViewResponse>("page/view", { id })
+  console.log({ page, pages })
   return { props: { page, pages } }
 }
 
@@ -26,7 +38,7 @@ function PageView({ page }: { page: any }) {
   useEffect(() => {
     return () => {
       if (savedValue.current !== currentValue.current) {
-        call("page/update", { id: page.id, body: currentValue.current })
+        Client.call("page/update", { id: page.id, body: currentValue.current })
       }
     }
   }, [])
@@ -39,15 +51,21 @@ function PageView({ page }: { page: any }) {
     currentValue.current = value
     const id = setTimeout(async () => {
       console.log("autosave after timeout")
-      await call("page/update", { id: page.id, body: currentValue.current })
+      await Client.call("page/update", {
+        id: page.id,
+        body: currentValue.current,
+      })
     }, 2000)
     return () => {
       clearTimeout(id)
     }
   }, [value])
 
+  /**
+   * Delete page
+   */
   async function deletePage() {
-    call("page/delete", { id: page.id })
+    Client.call("page/delete", { id: page.id })
     router.push("/")
   }
 
@@ -73,7 +91,7 @@ function PageView({ page }: { page: any }) {
 export default function Page({
   page,
   pages,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout pages={pages} activePageId={page.id}>
       <PageView key={page.id} page={page} />

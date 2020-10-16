@@ -1,6 +1,6 @@
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next"
 import { Response } from "./api/nav"
-import { call } from "~/lib/api/call"
+import { call } from "~/lib/api/client"
 
 export const getStaticProps: GetStaticProps<Response> = async () => {
   const response = await call("log", { reflect: true })

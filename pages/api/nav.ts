@@ -1,8 +1,9 @@
-import { NavPage } from "~/types"
-import { nextHandler } from "~/lib/next-handler"
 import { prisma } from "~/lib/prisma"
+import { Server } from "~/lib/api/server"
 
-export default nextHandler(async (req, res) => {
+// const Props = Struct.object({ id: Struct.number(), body: Struct.string() })
+
+const handler = Server.method(async (req, res) => {
   const pages = await prisma.page.findMany({
     select: { id: true, title: true },
     orderBy: { createdAt: "desc" },
@@ -10,4 +11,6 @@ export default nextHandler(async (req, res) => {
   return { pages }
 })
 
-export type Response = { pages: NavPage[] }
+export default handler
+
+export type Response = Server.ResponseType<typeof handler>

@@ -1,10 +1,13 @@
-import { nextHandler } from "~/lib/next-handler"
 import { prisma } from "~/lib/prisma"
+import { Server } from "~/lib/api/server"
+import * as s from "superstruct"
 
-const handler = nextHandler(async (req, res) => {
-  const id = req.body.id
+export const PageViewProps = s.object({ id: s.number() })
+
+const handler = Server.method(async (req, res) => {
+  const { id } = Server.props(req, PageViewProps)
   const page = await prisma.page.findOne({
-    select: { id: true, title: true, body: true, createdAt: true },
+    select: { id: true, title: true, body: true },
     where: { id },
   })
   if (page == null) throw new Error("Page not found")
@@ -13,4 +16,4 @@ const handler = nextHandler(async (req, res) => {
 
 export default handler
 
-export type Response = { pages: Array<{ id: number; title: string }> }
+export type PageViewResponse = Server.ResponseType<typeof handler>

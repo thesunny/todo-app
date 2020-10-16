@@ -2,7 +2,7 @@ import styled from "@emotion/styled"
 import cx from "classnames"
 import { NavPage } from "~/types"
 import Link from "next/link"
-import { call } from "../api/call"
+import { Client } from "../api/client"
 import { useRouter } from "next/router"
 
 const $Container = styled.div`
@@ -28,7 +28,7 @@ export function Layout({
 }) {
   const router = useRouter()
   async function addPage() {
-    const { id } = await call("page/add")
+    const { id } = await Client.call("page/add")
     router.push(`/page/${id}`)
   }
   return (
@@ -36,7 +36,7 @@ export function Layout({
       <$Container>
         <$Left>
           <div className="mb-2 text-right">
-            <button className="btn btn-primary" onClick={addPage}>
+            <button className="btn btn-outline-primary" onClick={addPage}>
               <i className="fa fa-plus mr-2" />
               Add page
             </button>
