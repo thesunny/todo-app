@@ -1,9 +1,10 @@
 import { prisma } from "~/lib/prisma"
+import * as s from "superstruct"
 import { Server } from "~/lib/api/server"
 
-// const Props = Struct.object({ id: Struct.number(), body: Struct.string() })
+const Props = s.object({})
 
-const handler = Server.method(async (req, res) => {
+const handler = Server.method(Props, async () => {
   const pages = await prisma.page.findMany({
     select: { id: true, title: true },
     orderBy: { createdAt: "desc" },

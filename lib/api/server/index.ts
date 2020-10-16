@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { assert, number, Struct } from "superstruct"
+import { assert, coerce, number, Struct } from "superstruct"
 import { JSONObject } from "~/lib/json-types"
 import { Unpromise } from "~/lib/ts-utils"
+import { log } from "./log"
+
+let lastId = 0
 
 export namespace Server {
   /**
@@ -14,20 +17,42 @@ export namespace Server {
    *
    * @param getResponse
    */
-  export function method<RT extends JSONObject>(
-    getResponse: (req: NextApiRequest, res: NextApiResponse) => Promise<RT>
+  export function method<P, RT extends JSONObject>(
+    struct: Struct<P>,
+    getResponse: (
+      props: P,
+      req: NextApiRequest,
+      res: NextApiResponse
+    ) => Promise<RT>
   ) {
     return async function (
       req: NextApiRequest,
       res: NextApiResponse
     ): Promise<RT> {
-      const response = await getResponse(req, res)
-      res.status(200).json(response)
-      /**
-       * We don't use the returned response but it is useful
-       * to derive the return type of the created `API.method`
-       */
-      return response
+      lastId++
+      const id = lastId
+      try {
+        const startTime = new Date().getTime()
+        const props = coerce(req.body, struct)
+
+        log.request(id, props)
+
+        const response = await getResponse(props, req, res)
+
+        const diff = new Date().getTime() - startTime
+        log.response(id, diff, response)
+
+        res.status(200).json(response)
+        /**
+         * We don't use the returned response but it is useful
+         * to derive the return type of the created `API.method`
+         */
+        return response
+      } catch (error) {
+        log.error(id, error)
+        res.status(500).send(error.stack)
+        throw error
+      }
     }
   }
 
