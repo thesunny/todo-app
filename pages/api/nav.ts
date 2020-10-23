@@ -14,4 +14,4 @@ const handler = Server.method(Props, async () => {
 
 export default handler
 
-export type Response = Server.ResponseType<typeof handler>
+export type NavMethod = Server.MethodType<typeof handler>

@@ -28,7 +28,7 @@ export namespace Server {
     return async function (
       req: NextApiRequest,
       res: NextApiResponse
-    ): Promise<RT> {
+    ): Promise<{ props: P; response: RT }> {
       lastId++
       const id = lastId
       try {
@@ -47,7 +47,7 @@ export namespace Server {
          * We don't use the returned response but it is useful
          * to derive the return type of the created `API.method`
          */
-        return response
+        return { props, response }
       } catch (error) {
         log.error(id, error)
         res.status(500).send(error.stack)
@@ -74,7 +74,7 @@ export namespace Server {
    * Takes a handler returned by `Server.method` and gets the TypeScript
    * type for the response.
    */
-  export type ResponseType<
+  export type MethodType<
     T extends (req: NextApiRequest, res: NextApiResponse) => Promise<any>
   > = Unpromise<ReturnType<T>>
 }

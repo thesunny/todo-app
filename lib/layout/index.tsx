@@ -29,7 +29,7 @@ export function Layout({
 }) {
   const router = useRouter()
   async function addPage() {
-    const { id } = await Client.call<PageAddResponse>("page/add")
+    const { id } = await Client.call<PageAddResponse>("page/add", {})
     router.push(`/page/${id}`)
   }
   return (
